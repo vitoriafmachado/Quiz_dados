@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz Full Stack: Python, SQL, Visualização e Análise</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    background: #111;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+  h1, h2 {
+    text-align: center;
+    color: #7f5af0;
+    text-shadow: 0 0 10px #a47cff;
+  }
+  .quiz-container {
+    background: #222;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 0 20px #5e3eff88;
+  }
+  .pergunta {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+  .opcoes {
+    margin-bottom: 15px;
+  }
+  button {
+    background: #7f5af0;
+    border: none;
+    color: #fff;
+    padding: 10px 18px;
+    margin: 6px 8px 6px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+  }
+  button:hover:not(:disabled) {
+    background: #a47cff;
+  }
+  button:disabled {
+    background: #555;
+    cursor: default;
+  }
+  .feedback {
+    font-weight: 700;
+    margin-top: 10px;
+    font-size: 1.1em;
+  }
+  .correta {
+    color: #6cff6c;
+  }
+  .errada {
+    color: #ff6c6c;
+  }
+  canvas {
+    max-width: 100%;
+    margin: 20px 0;
+    background: #333;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Quiz Full Stack - Python, SQL, Visualização e Análise</h1>
+
+<div class="quiz-container" id="quiz-container">
+  <!-- Conteúdo dinâmico aqui -->
+</div>
+
+<script>
+const quizData = [
+  // Rodada 1 - Python, NumPy, Pandas
+  {
+    rodada: 1,
+    perguntas: [
+      {
+        pergunta: "1. Qual a saída do código Python: print(type([1, 2, 3]))?",
+        opcoes: ["<class 'list'>", "<class 'tuple'>", "<class 'dict'>", "<class 'set'>"],
+        correta: "<class 'list'>",
+        feedback: "Listas em Python são declaradas com colchetes []."
+      },
+      {
+        pergunta: "2. O que faz o método NumPy 'np.reshape()'?",
+        opcoes: [
+          "Muda a forma (dimensão) do array",
+          "Altera os valores do array",
+          "Calcula a média dos elementos",
+          "Concatena dois arrays"
+        ],
+        correta: "Muda a forma (dimensão) do array",
+        feedback: "reshape muda o formato do array sem alterar os dados."
+      },
+      {
+        pergunta: "3. Em Pandas, como você seleciona a coluna 'idade' de um DataFrame 'df'?",
+        opcoes: [
+          "df.idade", "df['idade']", "df.loc['idade']", "df.select('idade')"
+        ],
+        correta: "df['idade']",
+        feedback: "A forma padrão para selecionar colunas é usando colchetes."
+      },
+      {
+        pergunta: "4. Qual comando cria um array NumPy de zeros com tamanho 5?",
+        opcoes: [
+          "np.zeros(5)", "np.ones(5)", "np.empty(5)", "np.zeros_like(5)"
+        ],
+        correta: "np.zeros(5)",
+        feedback: "np.zeros cria um array cheio de zeros."
+      },
+      {
+        pergunta: "5. O que faz o método Pandas 'dropna()'?",
+        opcoes: [
+          "Remove linhas com valores nulos", "Preenche valores nulos", "Cria um novo DataFrame", "Agrupa dados"
+        ],
+        correta: "Remove linhas com valores nulos",
+        feedback: "dropna elimina linhas com pelo menos um valor nulo."
+      },
+      {
+        pergunta: "6. Como você cria um array NumPy com números de 0 a 9?",
+        opcoes: [
+          "np.arange(10)", "np.linspace(0, 9, 10)", "np.array(0,9)", "np.range(0,10)"
+        ],
+        correta: "np.arange(10)",
+        feedback: "arange cria uma sequência de números inteiros."
+      },
+      {
+        pergunta: "7. No Pandas, qual método ordena um DataFrame pelo valor da coluna 'nota'?",
+        opcoes: [
+          "df.sort_values('nota')", "df.order('nota')", "df.sort('nota')", "df.arrange('nota')"
+        ],
+        correta: "df.sort_values('nota')",
+        feedback: "sort_values é o jeito certo de ordenar por coluna."
+      },
+      {
+        pergunta: "8. Qual a saída de print(np.array([1,2,3]) + 5)?",
+        opcoes: [
+          "[6,7,8]", "[1,2,3,5]", "Erro", "[5,5,5]"
+        ],
+        correta: "[6,7,8]",
+        feedback: "NumPy soma 5 a cada elemento do array."
+      },
+      {
+        pergunta: "9. No Pandas, como você seleciona as linhas onde a coluna 'idade' > 30?",
+        opcoes: [
+          "df[df['idade'] > 30]", "df.loc('idade' > 30)", "df.query('idade > 30')", "df.filter('idade > 30')"
+        ],
+        correta: "df[df['idade'] > 30]",
+        feedback: "Seleção condicional direta é feita assim."
+      },
+      {
+        pergunta: "10. Qual é a função do método 'head()' em Pandas?",
+        opcoes: [
+          "Mostra as primeiras linhas", "Mostra as últimas linhas", "Remove linhas duplicadas", "Agrupa dados"
+        ],
+        correta: "Mostra as primeiras linhas",
+        feedback: "head() mostra as 5 primeiras linhas por padrão."
+      }
+    ]
+  },
+
+  // Rodada 2 - SQL, Seaborn, Matplotlib
+  {
+    rodada: 2,
+    perguntas: [
+      {
+        pergunta: "11. Qual comando SQL retorna todos os dados da tabela 'clientes'?",
+        opcoes: ["SELECT * FROM clientes;", "GET ALL clientes;", "SHOW clientes;", "FIND * clientes;"],
+        correta: "SELECT * FROM clientes;",
+        feedback: "SELECT * FROM tabela é o básico pra pegar tudo."
+      },
+      {
+        pergunta: "12. Qual comando SQL filtra registros com idade maior que 30?",
+        opcoes: [
+          "SELECT * FROM tabela WHERE idade > 30;",
+          "SELECT * FROM tabela FILTER idade > 30;",
+          "SELECT idade > 30 FROM tabela;",
+          "FILTER tabela BY idade > 30;"
+        ],
+        correta: "SELECT * FROM tabela WHERE idade > 30;",
+        feedback: "WHERE é usado pra condições."
+      },
+      {
+        pergunta: "13. Qual função Seaborn cria um gráfico de dispersão?",
+        opcoes: ["sns.scatterplot()", "sns.barplot()", "sns.lineplot()", "sns.histplot()"],
+        correta: "sns.scatterplot()",
+        feedback: "scatterplot mostra pontos num gráfico."
+      },
+      {
+        pergunta: "14. Qual a função Matplotlib para exibir o gráfico criado?",
+        opcoes: ["plt.show()", "plt.draw()", "plt.display()", "plt.render()"],
+        correta: "plt.show()",
+        feedback: "show() abre a janela com o gráfico."
+      },
+      {
+        pergunta: "15. Qual argumento Seaborn usa para separar dados por categoria em cores?",
+        opcoes: ["hue", "style", "size", "color"],
+        correta: "hue",
+        feedback: "hue muda cor pra categorias."
+      },
+      {
+        pergunta: "16. Qual comando Matplotlib cria um gráfico de barras simples?",
+        opcoes: [
+          "plt.bar(x, y)", "plt.line(x, y)", "plt.scatter(x, y)", "plt.pie(x)"
+        ],
+        correta: "plt.bar(x, y)",
+        feedback: "bar cria gráfico de barras."
+      },
+      {
+        pergunta: "17. Em SQL, qual comando remove registros da tabela?",
+        opcoes: ["DELETE FROM tabela;", "DROP tabela;", "REMOVE FROM tabela;", "ERASE tabela;"],
+        correta: "DELETE FROM tabela;",
+        feedback: "DELETE apaga linhas, DROP apaga tabela inteira."
+      },
+      {
+        pergunta: "18. Qual função Seaborn usa para mostrar histogramas?",
+        opcoes: ["sns.histplot()", "sns.boxplot()", "sns.countplot()", "sns.barplot()"],
+        correta: "sns.histplot()",
+        feedback: "histplot cria histograma."
+      },
+      {
+        pergunta: "19. Como alterar o título de um gráfico Matplotlib?",
+        opcoes: [
+          "plt.title('Meu título')", "plt.set_title('Meu título')", "plt.graph_title('Meu título')", "plt.heading('Meu título')"
+        ],
+        correta: "plt.title('Meu título')",
+        feedback: "title() muda o título."
+      },
+      {
+        pergunta: "20. Qual comando SQL agrupa dados pela coluna 'categoria'?",
+        opcoes: [
+          "SELECT categoria, COUNT(*) FROM tabela GROUP BY categoria;",
+          "SELECT categoria, COUNT(*) FROM tabela ORDER BY categoria;",
+          "SELECT categoria, COUNT(*) FROM tabela WHERE categoria;",
+          "SELECT categoria, COUNT(*) FROM tabela FILTER categoria;"
+        ],
+        correta: "SELECT categoria, COUNT(*) FROM tabela GROUP BY categoria;",
+        feedback: "GROUP BY agrupa por categoria."
+      }
+    ]
+  },
+
+  // Rodada 3 - Análise de gráficos + gráficos para analisar
+  {
+    rodada: 3,
+    perguntas: [
+      {
+        pergunta: "21. No gráfico de barras, qual categoria teve o maior valor?",
+        tipo: "bar",
+        data: {
+          labels: ['A', 'B', 'C', 'D'],
+          datasets: [{
+            label: 'Valores',
+            data: [20, 45, 15, 35],
+            backgroundColor: ['#7f5af0','#a47cff','#5539a7','#9a74ff'],
+          }]
+        },
+        opcoes: ['A', 'B', 'C', 'D'],
+        correta: 'B',
+        feedback: "B tem o maior valor, 45."
+      },
+      {
+        pergunta: "22. No gráfico de pizza, qual fatia representa 25% do total?",
+        tipo: "pie",
+        data: {
+          labels: ['X', 'Y', 'Z', 'W'],
+          datasets: [{
+            label: 'Distribuição',
+            data: [10, 25, 40, 25],
+            backgroundColor: ['#7f5af0','#a47cff','#5539a7','#9a74ff'],
+          }]
+        },
+        opcoes: ['X', 'Y', 'Z', 'W'],
+        correta: 'Y',
+        feedback: "Y representa 25% do total."
+      },
+      {
+        pergunta: "23. No gráfico de linha, em qual ponto o valor é maior?",
+        tipo: "line",
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr'],
+          datasets: [{
+            label: 'Vendas',
+            data: [200, 400, 350, 500],
+            borderColor: '#7f5af0',
+            fill: false,
+          }]
+        },
+        opcoes: ['Jan', 'Fev', 'Mar', 'Abr'],
+        correta: 'Abr',
+        feedback: "Abril tem o maior valor, 500."
+      },
+      {
+        pergunta: "24. Qual o valor total do gráfico de barras abaixo?",
+        tipo: "bar",
+        data: {
+          labels: ['Item1', 'Item2', 'Item3'],
+          datasets: [{
+            label: 'Quantidade',
+            data: [5, 10, 15],
+            backgroundColor: ['#7f5af0','#a47cff','#5539a7'],
+          }]
+        },
+        opcoes: ['20', '25', '30', '35'],
+        correta: '30',
+        feedback: "5 + 10 + 15 = 30."
+      },
+      {
+        pergunta: "25. No gráfico de pizza, qual fatia é menor?",
+        tipo: "pie",
+        data: {
+          labels: ['Alpha', 'Beta', 'Gamma'],
+          datasets: [{
+            label: 'Percentual',
+            data: [40, 30, 30],
+            backgroundColor: ['#7f5af0','#a47cff','#5539a7'],
+          }]
+        },
+        opcoes: ['Alpha', 'Beta', 'Gamma'],
+        correta: 'Beta',
+        feedback: "Beta e Gamma têm o mesmo valor, mas Beta aparece primeiro."
+      },
+      {
+        pergunta: "26. No gráfico de linha, qual mês teve a menor venda?",
+        tipo: "line",
+        data: {
+          labels: ['Mai', 'Jun', 'Jul', 'Ago'],
+          datasets: [{
+            label: 'Vendas',
+            data: [500, 300, 400, 350],
+            borderColor: '#7f5af0',
+            fill: false,
+          }]
+        },
+        opcoes: ['Mai', 'Jun', 'Jul', 'Ago'],
+        correta: 'Jun',
+        feedback: "Junho tem o menor valor, 300."
+      },
+      {
+        pergunta: "27. Qual o tipo do gráfico que mostra a distribuição de frequência?",
+        opcoes: ['Histograma', 'Gráfico de barras', 'Gráfico de linhas', 'Gráfico de pizza'],
+        correta: 'Histograma',
+        feedback: "Histograma mostra a distribuição de frequência."
+      },
+      {
+        pergunta: "28. Qual gráfico é melhor para mostrar a evolução de vendas ao longo do tempo?",
+        opcoes: ['Gráfico de linha', 'Gráfico de barras', 'Gráfico de pizza', 'Gráfico de dispersão'],
+        correta: 'Gráfico de linha',
+        feedback: "Linha mostra tendências ao longo do tempo."
+      },
+      {
+        pergunta: "29. Em análise de gráficos, o que indica um pico repentino em dados de vendas?",
+        opcoes: [
+          "Promoção ou evento especial",
+          "Erro nos dados",
+          "Dados faltantes",
+          "Mudança na cor do gráfico"
+        ],
+        correta: "Promoção ou evento especial",
+        feedback: "Picos geralmente indicam eventos que impulsionam vendas."
+      },
+      {
+        pergunta: "30. Qual das opções abaixo NÃO é um gráfico comum para análise de dados?",
+        opcoes: ['Word Cloud', 'Gráfico de barras', 'Gráfico de linhas', 'Gráfico de pizza'],
+        correta: 'Word Cloud',
+        feedback: "Word Cloud não é típico para análise numérica de dados."
+      }
+    ]
+  }
+];
+
+// Variáveis de controle
+let rodadaAtual = 1;
+let perguntaAtual = 0;
+let pontos = 0;
+const totalRodadas = 3;
+const perguntasPorRodada = 10;
+
+const quizContainer = document.getElementById('quiz-container');
+
+function carregarPergunta() {
+  quizContainer.innerHTML = '';
+  const rodada = quizData.find(r => r.rodada === rodadaAtual);
+  const perguntaObj = rodada.perguntas[perguntaAtual];
+
+  const h2 = document.createElement('h2');
+  h2.textContent = `Rodada ${rodadaAtual} - Pergunta ${perguntaAtual + 1}`;
+  quizContainer.appendChild(h2);
+
+  const p = document.createElement('p');
+  p.classList.add('pergunta');
+  p.textContent = perguntaObj.pergunta;
+  quizContainer.appendChild(p);
+
+  // Se a pergunta tem gráfico
+  if (perguntaObj.tipo && perguntaObj.data) {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'graficoQuiz';
+    quizContainer.appendChild(canvas);
+
+    // Criar gráfico Chart.js
+    const ctx = canvas.getContext('2d');
+    if (window.chartInstance) window.chartInstance.destroy();
+    window.chartInstance = new Chart(ctx, {
+      type: perguntaObj.tipo,
+      data: perguntaObj.data,
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true, position: 'bottom' } }
+      }
+    });
+  }
+
+  const divOpcoes = document.createElement('div');
+  divOpcoes.classList.add('opcoes');
+
+  perguntaObj.opcoes.forEach(opcao => {
+    const btn = document.createElement('button');
+    btn.textContent = opcao;
+    btn.addEventListener('click', () => responder(opcao));
+    divOpcoes.appendChild(btn);
+  });
+
+  quizContainer.appendChild(divOpcoes);
+
+  // Feedback area
+  const feedback = document.createElement('div');
+  feedback.id = 'feedback';
+  feedback.classList.add('feedback');
+  quizContainer.appendChild(feedback);
+}
+
+function responder(resposta) {
+  const rodada = quizData.find(r => r.rodada === rodadaAtual);
+  const perguntaObj = rodada.perguntas[perguntaAtual];
+
+  const feedback = document.getElementById('feedback');
+  if (resposta === perguntaObj.correta) {
+    feedback.textContent = 'Correto! ' + perguntaObj.feedback;
+    feedback.classList.remove('errada');
+    feedback.classList.add('correta');
+    pontos++;
+  } else {
+    feedback.textContent = 'Errado! ' + perguntaObj.feedback;
+    feedback.classList.remove('correta');
+    feedback.classList.add('errada');
+  }
+
+  // Desabilita botões para evitar múltiplos cliques
+  document.querySelectorAll('.opcoes button').forEach(btn => btn.disabled = true);
+
+  setTimeout(() => {
+    perguntaAtual++;
+    if (perguntaAtual >= perguntasPorRodada) {
+      rodadaAtual++;
+      perguntaAtual = 0;
+      if (rodadaAtual > totalRodadas) {
+        mostrarResultado();
+        return;
+      }
+    }
+    carregarPergunta();
+  }, 2000);
+}
+
+function mostrarResultado() {
+  quizContainer.innerHTML = `
+    <h2>Fim do Quiz!</h2>
+    <p>Você marcou ${pontos} de ${totalRodadas * perguntasPorRodada} pontos.</p>
+    <p>${(pontos / (totalRodadas * perguntasPorRodada) >= 0.8) ? "Mandou muito bem, mestre dos dados!" : "Bora revisar e voltar mais forte!"}</p>
+    <button onclick="reiniciarQuiz()">Jogar novamente</button>
+  `;
+  if(window.chartInstance) window.chartInstance.destroy();
+}
+
+function reiniciarQuiz() {
+  rodadaAtual = 1;
+  perguntaAtual = 0;
+  pontos = 0;
+  carregarPergunta();
+}
+
+// Começa o quiz
+carregarPergunta();
+</script>
+
+</body>
+</html>
